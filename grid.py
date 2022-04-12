@@ -3,22 +3,23 @@ class Grid():
         print("Grid Initialisation ...")
 
     state = True
+    coherence = True
     values = []
+
+    #TODO Add tracker to redondent values and track them in incoherentCases table
+    incoherentCases=[]
 
     def insertGrid(self):
         for row in range(9):
             vals= input().split(" ")
-            # print("Read Line")
-            # print(vals)
             self.values.append([])
             for col in range(9):
-                # print(vals[col])
-                self.values[row].append({"val":vals[col],"poss":[1,2,3,4,5,6,7,8,9]})
-            # self.printGrid()
+                self.values[row].append({"val":vals[col],"poss":["1","2","3","4","5","6","7","8","9"]})
         for row in range(9):
             for col in range(9):
                 self.fillPossibleValues(row,col)
-        print("Insertion Complete")
+        self.verifyCoherence()
+        print("Grid Completed ...")
 
     def fillPossibleValues(self,x,y):
         for i in range(9):
@@ -29,8 +30,7 @@ class Grid():
         for i in range(3):
             for j in range(3):
                 if(self.values[3*(x//3)+i][3*(y//3)+j]["val"]!=0 and self.values[3*(x//3)+i][3*(y//3)+j]["val"] in self.values[x][y]["poss"]):
-                    self.values[x][y]["poss"].remove(self.values[3*(x//3)+i][3*(y//3)+j])
-
+                    self.values[x][y]["poss"].remove(self.values[3*(x//3)+i][3*(y//3)+j]["val"])
 
     def verifRow(self):
         for row in range(9):
@@ -63,13 +63,20 @@ class Grid():
                     if(blocValues[i]==blocValues[i+1] and blocValues[i]!=0 ):
                         return False
         return True
+    def verifyCoherence(self):
+        if(self.verifRow and self.verifColumns and self.verifBlocks):
+            print("Coherent Grid!")
+            self.coherence=True
+            return True
+        else:
+            print("Incoherent Grid")
+            self.coherence=False
+            return False
 
     def insertValue(self,x,y,value):
         self.values[x][y]["val"]=value
-        if(self.verifRow and self.verifColumns and self.verifBlocks):
-            return True
-        return False
-
+        return self.verifyCoherence
+        
     def deleteValue(self,x,y):
         self.values[x][y]["val"]=0
         if(self.verifRow and self.verifColumns and self.verifBlocks):
@@ -77,7 +84,7 @@ class Grid():
         return False
     def printGrid(self):
         poss=[]
-        print(self.values)
+        # print(self.values)
         for row in range(len(self.values)):
             s=[]
             for col in range(len(self.values[row])):
