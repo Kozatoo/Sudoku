@@ -1,0 +1,3 @@
+
+g.insertGrid()
+g.printGrid()
